@@ -34,7 +34,7 @@ impl TrapCode {
     fn from_u16(value: u16) -> TrapCode {
         let mask = 0b11111111;
         let trap = mask & value;
-        match(trap) {
+        match trap {
             0x20 => TrapCode::GETC, 
             0x21 => TrapCode::OUT, 
             0x22 => TrapCode::PUTS, 
@@ -68,7 +68,7 @@ enum OpCode {
 
 impl OpCode {
     fn from_u16(value: u16) -> OpCode {
-        match(value) {
+        match value {
             0 => OpCode::BR,
             1 => OpCode::ADD,
             2 => OpCode::LD,
@@ -117,10 +117,9 @@ fn fill_mem_from_offset(file: std::fs::File, memory: &mut [u16], offset: u16) {
     let mut b = 0;
     for byte in file.bytes() {
         if (b % 2 == 0) {
-            memory[(offset + b) as usize] = (byte.unwrap() as u16) << 8;
+            memory[(offset + b/2) as usize] = (byte.unwrap() as u16) << 8;
         } else {
-            memory[(offset + b - 1) as usize] |= byte.unwrap() as u16;
-            println!("result {:b}, location {} ", memory[(offset + b - 1) as usize], offset + b - 1);
+            memory[(offset + b/2) as usize] |= byte.unwrap() as u16;
         }
         b = b + 1;
     }
@@ -141,7 +140,7 @@ fn swap16(bytes: [u8; 2]) -> u16 {
 fn mem_read(address: u16, memory: &mut[u16]) -> u16 {
     if (address == MemoryRegister::KBSR as u16) {
         if (true) {
-            memory[MemoryRegister::KBSR as usize] = (1 << 15);
+            memory[MemoryRegister::KBSR as usize] = 1 << 15;
             memory[MemoryRegister::KBDR as usize] = 0;
         }
         else {
